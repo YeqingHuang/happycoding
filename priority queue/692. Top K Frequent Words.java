@@ -1,4 +1,5 @@
 class Solution {
+    // same question: 347. Top K Frequent Elements
     public List<String> topKFrequent(String[] words, int k) {
         Map<String, Integer> map = new HashMap<>();
         for (String w: words) {
