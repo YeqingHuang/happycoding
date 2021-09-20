@@ -1,4 +1,6 @@
 class Solution {
+    // another method without sorting is to build
+    // two freqMaps, and count = Math.min(freq1[i], freq2[i])
     public int[] intersect(int[] nums1, int[] nums2) {
         // sort and use two pointers
         Arrays.sort(nums1);
