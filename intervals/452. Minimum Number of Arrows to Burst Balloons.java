@@ -1,0 +1,20 @@
+class Solution {
+    public int findMinArrowShots(int[][] points) {
+        // sort by end time, pick the one that end earliest to give the first arrow
+        // this one has currEnding, then begin to iterate the following ballons
+        // if its start <= currEnding, it can be solved with existing arrow
+        // otherwise, get another arrow
+        Arrays.sort(points, (a,b) -> Integer.compare(a[1],b[1]));
+        int arrows = 1;
+        int currEnding = points[0][1];
+        for (int i=1; i<points.length; i++) {
+            if (points[i][0] <= currEnding) {
+                continue;
+            } else {
+                arrows++;
+                currEnding = points[i][1];
+            }
+        }
+        return arrows;
+    }
+}
