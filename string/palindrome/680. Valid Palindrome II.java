@@ -7,6 +7,8 @@ class Solution {
                 i++;
                 j--;
             } else {
+                // either ignore i, i.e. i+1
+                // or ignore j, i.e. j-1
                 return isPalindrome(s, i+1, j) || isPalindrome(s, i, j-1);
             }
         }
