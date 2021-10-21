@@ -1,41 +1,34 @@
 class MedianFinder {
-    // thoughts: two candidates of median: even size (average), odd size(choose one)
-    // how to get the two candidates exposed? i.e. get them in less than O(n) time
-    // maintain a maxHeap for the left subarray, a minHeap for the right subarray
-    // minHeap's size = maxHeap's size OR maxHeap's size - minHeap's size = 1
+    // we want the two candidates get exposed
+    // assume left half can have one number more than the right half
+    // left half is maxHeap, right half is minHeap
+    PriorityQueue<Integer> left, right;
     
-    PriorityQueue<Integer> minHeap;
-    PriorityQueue<Integer> maxHeap;
-    /** initialize your data structure here. */
     public MedianFinder() {
-        minHeap = new PriorityQueue<>();
-        maxHeap = new PriorityQueue<>((a,b) -> Integer.compare(b,a));
+        left = new PriorityQueue<>((a,b) -> Integer.compare(b, a));
+        right = new PriorityQueue<>();
     }
     
     public void addNum(int num) {
-        // two steps:
-        // 1) add to one of the heaps according to its value
-        // 2) balance sizes if needed
-        if (maxHeap.isEmpty() || maxHeap.peek() >= num) {
-            maxHeap.offer(num);
+        if (left.isEmpty() || left.peek() >= num) {
+            left.offer(num);
         } else {
-            minHeap.offer(num);
+            right.offer(num);
         }
         
-        if (minHeap.size() > maxHeap.size()) {
-            // right part has one more number
-            maxHeap.offer(minHeap.poll());
-        } else if (maxHeap.size() - 1 > minHeap.size()) {
-            minHeap.offer(maxHeap.poll());
+        if (left.size() < right.size()) {
+            left.offer(right.poll());
         }
-        
+        if (left.size() - 1 > right.size()) {
+            right.offer(left.poll());
+        }
     }
-    
+   
     public double findMedian() {
-        if (minHeap.size() == maxHeap.size()) {
-            return (minHeap.peek() + maxHeap.peek())/2.0;
+        if (left.size() == right.size()) {
+            return left.peek() / 2.0 + right.peek() / 2.0;
         } else {
-            return maxHeap.peek();
+            return left.peek();
         }
     }
     // time: addNum takes O(logn), findMedian takes O(1)

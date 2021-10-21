@@ -1,75 +1,66 @@
 class Solution {
     public List<List<Integer>> palindromePairs(String[] words) {
-        // 3 cases:
-        // s2 is a reversed string of s1, then s1+s2 is valid
-        // s2 = (palindrome part + reversed s1), then s1+s2 is valid
-        // s1 = reversed s2 + parlinform part, then s1+s2 is valid
+        List<List<Integer>> ans = new ArrayList<>();
+        // case1: s1 is abc, s2 is cba
+        // i.e. one is a reversed string of the other, so they form a pair
         
-        // for case2, if a prefix of a word is p, we can see if the reversed rest part matches any word
-        // for case3, if a suffix of a word is p, we can check if the reversed prefix matches any word
+        // case2: one part in one string is palindrome, we want to find if
+        // the other string complement the invalid part
+        // 2a) s1: p part + invalid, s2: reversed(invalid), then s2 + s1 is ok
+        // 2b) s1: invalid + p part, s2 : reversed(invalid), then s1 + s2 is ok
         
-        Map<String, Integer> map = new HashMap<>(); // word, index
-        for (int i = 0; i < words.length; i++) {
+        // for 2a) if prefix is p, we stop and check if reversed right part matches any word
+        // for 2b) if suffix is p, we stop and check if reversed left part matches any word
+        // note that there may be multiple p part in s1
+        Map<String, Integer> map = new HashMap<>();
+        for (int i=0; i<words.length; i++) {
             map.put(words[i], i);
         }
-        List<List<Integer>> ans = new ArrayList<>();
-
-        for (String word : map.keySet()) {
-            int index = map.get(word);
-            String reversedWord = new StringBuilder(word).reverse().toString();
+        
+        String desired;
+        for (int k=0; k<words.length; k++) {
+            String word = words[k];
             // case1
-            if (map.containsKey(reversedWord) && map.get(reversedWord) != index) {
-                ans.add(Arrays.asList(index, map.get(reversedWord)));
+            String reversed = reverseStr(word);
+            if (map.containsKey(reversed) && map.get(reversed) != k) {
+                // don't try to add {k, map.get(reversed)}, which will double the answer
+                ans.add(Arrays.asList(map.get(reversed), k));
             }
-            // case2
-            for (String suffix: findSuffixes(word)) {
-                String reversedSuffix = new StringBuilder(suffix).reverse().toString();
-                if (map.containsKey(reversedSuffix)) {
-                    ans.add(Arrays.asList(map.get(reversedSuffix), index));
+            // case2a
+            for (int i=0; i<word.length(); i++) {
+                if (isPalindrome(word, 0, i)) {
+                    desired = reverseStr(word.substring(i+1));
+                    if (map.containsKey(desired)) {
+                        ans.add(Arrays.asList(map.get(desired), k));
+                    }
                 }
             }
-            // case3:
-            for (String prefix: findPrefixes(word)) {
-                 String reversedPrefix = new StringBuilder(prefix).reverse().toString();
-                if (map.containsKey(reversedPrefix)) {
-                    ans.add(Arrays.asList(index, map.get(reversedPrefix)));
+            // case2b
+            for (int i=word.length() - 1; i >= 0; i--) {
+                if (isPalindrome(word, i, word.length() - 1)) {
+                    desired = reverseStr(word.substring(0,i));
+                    if (map.containsKey(desired)) {
+                        ans.add(Arrays.asList(k, map.get(desired)));
+                    }
                 }
             }
         }
-        return ans;
+        return ans;   
     }
     
-    private List<String> findPrefixes(String word) {
-        List<String> ans = new ArrayList<>();
-        for (int i=0; i<word.length(); i++) {
-            if (palindromePart(word, i, word.length()-1)) {
-                // we need to check word.substring(0,i)
-                ans.add(word.substring(0,i));
-            }
-        }
-        return ans;
-    }
-    
-    private List<String> findSuffixes(String word) {
-        List<String> ans = new ArrayList<>();
-        for (int i=0; i<word.length(); i++) {
-            if (palindromePart(word, 0, i)) {
-                // we need to check word.substring(0,i)
-                ans.add(word.substring(i+1, word.length()));
-            }
-        }
-        return ans;
-    }
-    
-    private boolean palindromePart(String s, int start, int end) {
-        while (start < end) {
-            if (s.charAt(start) == s.charAt(end)) {
-                start++;
-                end--;
-            } else {
+    private boolean isPalindrome(String s, int i, int j) {
+        while (i < j) {
+            if (s.charAt(i) != s.charAt(j)) {
                 return false;
             }
+            i++;
+            j--;
         }
         return true;
+    }
+    
+    private String reverseStr(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        return sb.reverse().toString();
     }
 }
