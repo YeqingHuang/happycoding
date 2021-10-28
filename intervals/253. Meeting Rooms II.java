@@ -1,28 +1,29 @@
 class Solution {
+    // k intervals, the priority queue would has a size of k in the worst case
+    // space O(k), time O(klogk)
     public int minMeetingRooms(int[][] intervals) {
-        // process by starting time
-        // use some data structure to keep the ongoing meetings
-        // when we add a new meeting, first check if there are any finished meetings
-        // we want to quickly get the earliest ending meeting, use a minHeap for this
-        // p.s once a meeting is added to the minHeap, its starting time no longer matters
-        // so we only store ending time
         if (intervals.length <= 1) return intervals.length;
         
         Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
-        int peakCount = 0;
+        // use a queue to store the ending time
+        // when we process a new meeting, first check if there are any meetings that have ended
+        // if yes, pop them out
+        // then add this meeting and capture current size
+        int peakSize = 0;
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         for (int[] interval: intervals) {
             int start = interval[0];
-            int ending = interval[1];
+            int end = interval[1];
             while (!pq.isEmpty() && pq.peek() <= start) {
                 pq.poll();
             }
-            pq.offer(ending);
-            peakCount = Math.max(peakCount, pq.size());
+            pq.offer(end);
+            peakSize = Math.max(peakSize, pq.size());
         }
-        return peakCount;
+        return peakSize;
     }
 
+    // sorting takes O(2klog2k)
     public int minMeetingRooms1(int[][] intervals) {
         // mix and sort all points together
         // when it's a starting point, + 1; when it's an ending point, -1
