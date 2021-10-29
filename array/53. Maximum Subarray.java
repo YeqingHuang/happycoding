@@ -1,8 +1,7 @@
 class Solution {
     public int maxSubArray(int[] nums) {
-        // intuitive thoughts:
-        // if previous accumulated sum is positive, include it
-        // otherwise, stop and just use nums[i]
+        // clarify if we have the option of not choosing any numbers
+        // case like [-1], shall we return -1 or 0?
         int maxSum = nums[0];
         int currSum = nums[0];
         for (int i=1; i<nums.length; i++) {

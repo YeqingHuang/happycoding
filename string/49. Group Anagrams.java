@@ -1,17 +1,13 @@
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
         // a mutable hashmap cannot be used as a key
-        // what's the best way to represent a freq map?
-        // use a serialization helper function
         Map<String, List<String>> map = new HashMap<>();
         for (String word: strs) {
             String key = getKey(word);
             map.putIfAbsent(key, new ArrayList<>());
             map.get(key).add(word);
         }
-        
-        List<List<String>> ans = new ArrayList<>(map.values());
-        return ans;
+        return new ArrayList<>(map.values());
     }
     
     
@@ -31,5 +27,11 @@ class Solution {
             }
         }
         return sb.toString();
+    }
+    // a much simpler way it to sort the string
+    private String getKey1(String s) {
+        char[] chars = s.toCharArray();
+        Arrays.sort(chars);
+        return String.valueOf(chars);
     }
 }
