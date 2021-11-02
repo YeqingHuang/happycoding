@@ -8,10 +8,8 @@ class Solution {
         ListNode prev = null;
         ListNode curr = head;
         while (curr != null) {
-            // rebuild next pointer
             ListNode temp = curr.next;
             curr.next = prev;
-            // move prev and curr
             prev = curr;
             curr = temp;
         }
