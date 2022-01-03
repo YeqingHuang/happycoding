@@ -1,17 +1,18 @@
 class Solution {
     public int subarraySum(int[] nums, int k) {
-        // prefix sum
-        int ans = 0;
-        Map<Integer, Integer> map = new HashMap<>(); // prefix sum, count
+        // continuous subarrays whose sum equals to k
+        // naive: O(n^2), TLE
+        // prefix sum: O(n)
+        Map<Integer, Integer> map = new HashMap<>(); // prefixSum, count
         map.put(0,1);
-        int prefixSum = 0;
+        
+        int sum = 0, ans = 0;
         for (int num: nums) {
-            prefixSum += num;
-            int desired = prefixSum - k;
-            if (map.containsKey(desired)) {
-                ans += map.get(desired);
+            sum += num;
+            if (map.containsKey(sum - k)) {
+                ans += map.get(sum - k);
             }
-            map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
+            map.put(sum, map.getOrDefault(sum, 0)+1);
         }
         return ans;
     }
