@@ -1,5 +1,4 @@
 class Solution {
-    // refer to solution2, this one is not ideal
     class NodeInfo {
         TreeNode node;
         int row;
@@ -13,9 +12,6 @@ class Solution {
     }
     
     public List<List<Integer>> verticalOrder(TreeNode root) {
-        // curr node has col = 0, left child col--, right child col++
-        // we use level order traversal, each node has an additional info, i.e. col
-        // after we get a list of a level, sort by col value
         if (root == null) return new ArrayList<>();
         
         List<NodeInfo> nodes = new ArrayList<>();
@@ -35,9 +31,8 @@ class Solution {
             }
         }
         
-        // now result contains all the nodes
-        // first sort by col (increasing), then sort by row(increasing)
         Collections.sort(nodes, (a,b) -> a.col == b.col ? a.row - b.row : a.col - b.col);
+        
         int currCol = nodes.get(0).col;
         List<Integer> oneColumn = new ArrayList<>();
         List<List<Integer>> ans = new ArrayList<>();
