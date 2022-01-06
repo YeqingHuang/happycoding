@@ -2,8 +2,8 @@ class Solution {
     // bfs
     public int maxAreaOfIsland(int[][] grid) {
         int maxArea = 0;
-        for (int i=0; i<grid[0].length; i++) {
-            for (int j=0; j<n; j++) {
+        for (int i=0; i<grid.length; i++) {
+            for (int j=0; j<grid[0].length; j++) {
                 if (grid[i][j] == 1) {
                     int area = bfs(i, j, grid);
                     maxArea = Math.max(maxArea, area);
@@ -36,7 +36,6 @@ class Solution {
         return count;
     }
 }
-
 
 class Solution {
     // dfs
