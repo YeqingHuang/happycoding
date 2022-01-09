@@ -8,7 +8,7 @@ class Solution {
         
         int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}}; // up, right, down, left
         int x = 0, y = 0;
-        int facing = 0; 
+        int facing = 0;  // i.e. facing north
         
         for (char c: instructions.toCharArray()) {
             if (c == 'G') {
@@ -26,6 +26,6 @@ class Solution {
         
         // check ending position
         if (x == 0 && y == 0) return true;
-        return facing == 0 ? false: true;
+        return facing != 0;
     }
 }
