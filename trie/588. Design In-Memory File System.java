@@ -1,52 +1,50 @@
 class FileSystem {
-    // use a trie to preserve the structure
-    // for the trieNode class, let's call it node
-    // if it's a file, it should have some string content
-    // otherwise it's treated as a folder 
+    
     class Node {
-        boolean isFile;
         HashMap<String, Node> children;
-        String content;
+        StringBuilder content;
+        boolean isFile;
         
         public Node() {
-            this.isFile = false;
             this.children = new HashMap<>();
-            this.content = "";
+            this.content = new StringBuilder();
+            this.isFile = false;
         }
     }
     
-    Node root;
+    private Node root;
     
     public FileSystem() {
-        root = new Node();
+        root = new Node(); // a dummy node
     }
     
-    // "/a/b/c" becomes [, a, b, c]
-    // after we split by "/", we always start from index = 1   
     public List<String> ls(String path) {
+        // note that the answer should in lexicographic order
         Node curr = root;
         List<String> ans = new ArrayList<>();
-        if (!path.equals("/")) {
-            // general case
-            String[] parts = path.split("/");
-            for (int i=1; i<parts.length; i++) {
-                curr = curr.children.get(parts[i]);
-            }
-            if (curr.isFile) {
-                // return a list that only contains this file's name
-                String fileName = parts[parts.length -1];
-                ans.add(fileName);
-            } else {
-                // return the list of file and directory names in this folder
-                ans.addAll(curr.children.keySet());
-                Collections.sort(ans);
-            }
+    
+        // case1: it's the root
+        if (path.equals("/")) {
+            ans.addAll(curr.children.keySet());
+            Collections.sort(ans);
             return ans;
         }
         
-        // we are checking "/", it cannot be a file itself
-        ans.addAll(curr.children.keySet());
-        Collections.sort(ans);
+        // case2: it's a normal path
+        // "/a/b/c" becomes [, a, b, c]
+        // after we split by "/", we should start from index = 1  
+        String[] parts = path.split("/");
+        for (int i=1; i<parts.length; i++) {
+            curr = curr.children.get(parts[i]);
+        }
+        // now curr stays at either a file path or a folder
+        if (curr.isFile) {
+            // the answer only contails one string, i.e. file name
+            ans.add(parts[parts.length - 1]);
+        } else {
+            ans.addAll(curr.children.keySet());
+            Collections.sort(ans);
+        }
         return ans;
     }
     
@@ -54,30 +52,30 @@ class FileSystem {
         Node curr = root;
         String[] parts = path.split("/");
         for (int i=1; i< parts.length; i++) {
-            String dest = parts[i];
-            if (!curr.children.containsKey(dest)) {
-                curr.children.put(dest, new Node());
+            String part = parts[i];
+            if (!curr.children.containsKey(part)) {
+                curr.children.put(part, new Node());
             }
-            curr = curr.children.get(dest);
+            curr = curr.children.get(part);
         }
     }
     
     public void addContentToFile(String filePath, String content) {
-        // this is an existing filePath, we don't need to worry about mkdir
         Node curr = root;
         String[] parts = filePath.split("/");
+        // save the last step, because the file name may not exist
         for (int i=1; i<parts.length - 1; i++) {
             curr = curr.children.get(parts[i]);
         }
         
-        // we either create a new file, or we append content to the existing file
         String fileName = parts[parts.length - 1];
         if (!curr.children.containsKey(fileName)) {
             curr.children.put(fileName, new Node());
         }
         curr = curr.children.get(fileName);
+        
         curr.isFile = true;
-        curr.content = curr.content + content;
+        curr.content.append(content);
     }
     
     public String readContentFromFile(String filePath) {
@@ -86,6 +84,6 @@ class FileSystem {
         for (int i=1; i<parts.length; i++) {
             curr = curr.children.get(parts[i]);
         }
-        return curr.content;
+        return curr.content.toString();
     }
 }
