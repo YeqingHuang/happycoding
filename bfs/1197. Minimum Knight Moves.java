@@ -1,7 +1,8 @@
 class Solution {
-    final int[][] DIRS = {{1,-2}, {2,-1}, {2,1}, {1,2}, {-1,2}, {-2,1}, {-2,-1},{-1,-2}};
-    
     public int minKnightMoves(int x, int y) {
+        if (x == 0 && y == 0) return 0;
+        
+        int[][] DIRS = {{1,-2}, {2,-1}, {2,1}, {1,2}, {-1,2}, {-2,1}, {-2,-1},{-1,-2}};
         Queue<int[]> queue = new LinkedList<>();
         boolean[][] visited = new boolean[601][601];
         queue.add(new int[]{0,0});
