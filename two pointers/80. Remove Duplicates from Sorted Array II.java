@@ -1,21 +1,26 @@
 class Solution {
     public int removeDuplicates(int[] nums) {
-        if (nums.length <= 1) return nums.length;
+        if (nums.length <= 2) return nums.length;
         
-        // i points to the last filled in index
-        // j is used to iterate
-        int i = 0;
-        int prevCount = 1;
-        for (int j=1; j<nums.length; j++) {
-            if (nums[j] != nums[i]) {
-                nums[++i] = nums[j];
-                prevCount = 1;
-            } else if (prevCount == 1) {
-                // we can still add one more
-                nums[++i] = nums[j];
-                prevCount++;
+        int i = 1; // first available pos
+        int j = 1; // iterate array
+        int count = 1; // nums[0] has a freq of 1
+        while (j<nums.length) {
+            // step1: check
+            if (nums[j] == nums[j-1]) {
+                count++;
+            } else {
+                count = 1;
+            }
+            // step2: keep it unchanged or overwrite
+            if (count <= 2) {
+                nums[i] = nums[j];
+                i++;
+                j++;
+            } else {
+                j++;
             }
         }
-        return i + 1;
+        return i;
     }
 }
