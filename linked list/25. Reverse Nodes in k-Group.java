@@ -2,39 +2,38 @@ class Solution {
     public ListNode reverseKGroup(ListNode head, int k) {
         if (head == null || k == 1) return head;
         
-        // we move k steps ahead, and stops at the reversed head
-        // then do the reversion
-        // this new head is the tail of the next reversed part
+        // step1: we move k steps ahead, and stops at head of the next chunk
+        // step2: do the reversion
         return reverseHelper(head, k);
     }
     
     private ListNode reverseHelper(ListNode head, int k) {
-        int count = 0;
+        int step = 0;
         ListNode curr = head;
-        while (count < k && curr != null) {
-            count++;
+        while (step < k && curr != null) {
             curr = curr.next;
+            step++;
         }
-        if (count == k) {
-            // note that curr is pointing to (k+1)th node
-            ListNode newHead = partlyReverse(head, k);
+        if (step == k) {
+            // now the tail of this chunk becomes the new head
+            // the old head becomes the tail and points to curr
+            // note that we should not change the sequence of the next two lines
+            ListNode newHead = reverseChunk(head, k);
             head.next = reverseHelper(curr, k);
             return newHead;
         } else {
-            return head; // not long enough to reverse this part
+            return head; // k is bigger than the length of this chunk
         }
     }
     
-    private ListNode partlyReverse(ListNode head, int k) {
+    private ListNode reverseChunk(ListNode node, int k) {
         ListNode prev = null;
-        ListNode curr = head;
+        ListNode curr = node;
         while (k > 0) {
             ListNode temp = curr.next;
             curr.next = prev;
-            // move two pointers
             prev = curr;
             curr = temp;
-            // change k
             k--;
         }
         return prev;

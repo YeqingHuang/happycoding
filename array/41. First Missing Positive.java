@@ -14,32 +14,41 @@ class Solution {
         }
         return nums.length+1;
     }
+}
 
+class Solution1 {
     public int firstMissingPositive(int[] nums) {
-        // O(1) space: 565. Array Nesting
-        // ideally, this array should be [1,2,3,4,5]...
-        // in the first pass, we try to allocate num to its "correct" index
-        // in the second pass, once we find nums[i] != i + 1, the answer is i+1
-        int n = nums.length;
-        
-        for (int i=0; i<n; i++) {
-            if (nums[i] >= 1 && nums[i] <= n && nums[i] != i + 1) {
-                // try to start a loop from here
-                int currNum = nums[i];
-                while (currNum >= 1 && currNum <= n && nums[currNum-1] != currNum) {
-                    int index = currNum - 1;
-                    int temp = nums[index];
-                    nums[index] = currNum;
-                    currNum = temp;
+        // make use of the index
+        // the idea is to place every number at the correct place
+        // in the second pass, once nums[k] != k+1, we find the answer
+        int i = 0;
+        while (i < nums.length) {
+            if (nums[i] <= 0 || nums[i] > nums.length || nums[i] == i+1) {
+                // no index to place this number
+                // OR it's already at the right place
+                i++;
+            } else {
+                // the right index for nums[i] is nums[i] - 1
+                if (nums[nums[i] - 1] != nums[i]) {
+                    swap(nums, i, nums[i] - 1);
+                } else {
+                    // nums[i] - 1 already has the correct number
+                    i++;
                 }
             }
         }
         
-        for (int k=0; k<n; k++) {
-            if (nums[k] != k + 1) {
-                return k + 1;
+        for (int k=0; k<nums.length; k++) {
+            if (nums[k] != k+1) {
+                return k+1;
             }
         }
-        return n + 1;
+        return nums.length+1;
+    }
+    
+    private void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
 }
