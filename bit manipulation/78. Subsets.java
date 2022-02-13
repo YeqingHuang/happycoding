@@ -1,7 +1,7 @@
 class Solution {
     // method1: easy to understand
     public List<List<Integer>> subsets(int[] nums) {
-        // double the size of the answers when we add a new number
+        // double the size of the answers when we include a new number
         // [1,2,3] begins with [[]]
         // add 1, we have [[],[1]]
         // add 2, we have [[],[1], [2], [1,2]]
@@ -11,39 +11,34 @@ class Solution {
             return ans;
         }
         
-        ans.add(new ArrayList<>());
+        ans.add(new ArrayList<>()); // base case
         for (int num: nums) {
-            List<List<Integer>> lists = new ArrayList<>(ans);
-            for (List<Integer> oldList: lists) {
-                List<Integer> copied = new ArrayList<>(oldList);
-                copied.add(num);
-                ans.add(copied);
+            List<List<Integer>> oldAns = new ArrayList<>(ans);
+            for (List<Integer> list: oldAns) {
+                List<Integer> copiedList = new ArrayList<>(list);
+                copiedList.add(num);
+                ans.add(copiedList);
             }
         }
         return ans;
     }
 
-    // method2: bitmask
-    public List<List<Integer>> subsets1(int[] nums) {
-        // consider [1,2,3]
-        // if we can generate 000, 001, 010, 011, 100, 101, 110, 111
-        // we will know if we should add nums[i] or not
-        List<List<Integer>> ans = new ArrayList<>();
-        if (nums == null || nums.length == 0) {
-            return ans;
-        }
+    // method2: bit manipulation
+        public List<List<Integer>> subsets(int[] nums) {
+        // [1,2,3] has a length of 3, so there are 2^3 combinations
+        // we need to generate 000, 001, 010, 011,... till 111 as the mask
         
+        List<List<Integer>> ans = new ArrayList<>();
         int n = nums.length;
-        for (int num=0; num<Math.pow(2, n); num++) {
-            // check one digit at a time, use a mask, 0, 10, 100, 1000...
+        for (int mask = 0; mask < 1 << n; mask++) {
             List<Integer> subset = new ArrayList<>();
-            int mask = 1;
+            // we append a number when the mask has 1 for this digit
+            int digit = 1;
             for (int i=0; i<n; i++) {
-                if ((mask & num) != 0) {
-                    // digit i is 1 in num
+                if ((mask & digit) != 0) {
                     subset.add(nums[i]);
                 }
-                mask <<= 1;
+                digit <<= 1;
             }
             ans.add(subset);
         }
