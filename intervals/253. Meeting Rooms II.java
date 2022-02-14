@@ -1,26 +1,28 @@
 class Solution {
     // k intervals, the priority queue would has a size of k in the worst case
     // space O(k), time O(klogk)
-    public int minMeetingRooms(int[][] intervals) {
+public int minMeetingRooms(int[][] intervals) {
+        // method1: priority queue
+        // sort the meetings by start time, and push the first one to the pq
+        // when there's a new meeting, we check if we can pop any finished meetings
+        // i.e. minHeap there the sorting key is the ending time
         if (intervals.length <= 1) return intervals.length;
         
-        Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
-        // use a queue to store the ending time
-        // when we process a new meeting, first check if there are any meetings that have ended
-        // if yes, pop them out
-        // then add this meeting and capture current size
-        int peakSize = 0;
-        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        Arrays.sort(intervals, (a,b) -> a[0] == b[0] ? 
+                    Integer.compare(a[1], b[1]) :Integer.compare(a[0], b[0]) );
+        PriorityQueue<Integer> pq = new PriorityQueue<>((a,b) -> Integer.compare(a, b));
+        
+        int maxCount = 0;
         for (int[] interval: intervals) {
-            int start = interval[0];
-            int end = interval[1];
-            while (!pq.isEmpty() && pq.peek() <= start) {
+            int startTime = interval[0];
+            int endTime = interval[1];
+            while (!pq.isEmpty() && pq.peek() <= startTime) {
                 pq.poll();
             }
-            pq.offer(end);
-            peakSize = Math.max(peakSize, pq.size());
-        }
-        return peakSize;
+            pq.offer(endTime);
+            maxCount = Math.max(pq.size(), maxCount);
+        }         
+        return maxCount;                                            
     }
 
     // sorting takes O(2klog2k)
